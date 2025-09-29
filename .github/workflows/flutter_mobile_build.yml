@@ -1,0 +1,112 @@
+name: Build Flutter Android & iOS (Frontend)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'app/**'
+      - '.github/workflows/flutter_mobile_build.yml'
+  pull_request:
+    paths:
+      - 'app/**'
+
+concurrency:
+  group: mobile-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-mobile:
+    name: Build Android APK/AAB and iOS IPA
+    runs-on: macos-latest  # 使用 macOS 同时构建 Android 与 iOS
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: app
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      # Java 17（Android Gradle Plugin 兼容）
+      - name: 安装 Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 安装 Flutter SDK（稳定版）并缓存
+      - name: 安装 Flutter SDK (stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Flutter 环境信息
+        run: |
+          flutter --version
+          dart --version
+
+      # 缓存 Pub/Gradle 以加速
+      - name: 缓存 Pub 包
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+          key: pub-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: 缓存 Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: 获取依赖
+        run: flutter pub get
+
+      - name: 代码静态检查
+        run: flutter analyze
+
+      # 如有必要，你可以启用 Flutter 单元测试
+      # - name: 运行测试
+      #   run: flutter test --reporter=expanded
+
+      # -------- Android 构建 (APK/AAB) --------
+      - name: 构建 Android APK（release）
+        run: flutter build apk --release
+
+      - name: 构建 Android AppBundle（release）
+        run: flutter build appbundle --release
+
+      - name: 上传 Android 构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-artifacts
+          path: |
+            app/build/app/outputs/flutter-apk/app-release.apk
+            app/build/app/outputs/bundle/release/app-release.aab
+
+      # -------- iOS 构建 (IPA 无签名) --------
+      - name: 安装 iOS 依赖（CocoaPods）
+        run: |
+          cd ios
+          pod install --repo-update
+        continue-on-error: true  # 若 Flutter 自动处理 Pods，此步可容忍失败
+
+      - name: 构建 iOS IPA（release，无签名）
+        run: flutter build ipa --release --no-codesign
+
+      - name: 上传 iOS 构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-artifacts
+          path: |
+            app/build/ios/ipa/*.ipa
+
+      # 如需导出符号表/映射文件（供崩溃分析或混淆还原），可在此处追加上传步骤
+

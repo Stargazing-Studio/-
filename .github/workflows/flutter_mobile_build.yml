@@ -77,7 +77,7 @@ jobs:
 
       # -------- Android 构建 (APK/AAB) --------
       - name: 构建 Android APK（release）
-        run: flutter build apk --releasee --dart-define=API_BASE_URL=http://101.237.129.72:8000 --dart-define=WS_CHRONICLES_URL=ws://101.237.129.72:8000/ws/chronicles
+        run: flutter build apk --release --dart-define=API_BASE_URL=http://101.237.129.72:8000 --dart-define=WS_CHRONICLES_URL=ws://101.237.129.72:8000/ws/chronicles
 
       - name: 构建 Android AppBundle（release）
         run: flutter build appbundle --release --dart-define=API_BASE_URL=http://101.237.129.72:8000 --dart-define=WS_CHRONICLES_URL=ws://101.237.129.72:8000/ws/chronicles

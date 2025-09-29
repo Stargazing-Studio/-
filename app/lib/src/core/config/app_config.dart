@@ -21,7 +21,7 @@ class AppConfig {
   static String _defaultApiBase() {
     if (kIsWeb) {
       final current = Uri.base;
-      final host = current.host.isNotEmpty ? current.host : 'localhost';
+      final host = current.host.isNotEmpty ? current.host : '101.237.129.72';
       final scheme = current.scheme == 'https' ? 'https' : 'http';
       // Web 环境默认复用当前主机，便于在局域网或多终端调试时直连本地后端
       return Uri(scheme: scheme, host: host, port: 8000).toString();

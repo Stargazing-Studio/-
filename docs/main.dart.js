@@ -89000,7 +89000,7 @@ G(a){var s=null
 return A.jm(B.cw,A.b([A.ia(s,s,B.u,s,s,B.BG,s,s,s,s,s,s,s),this.c],t.p),B.y,B.bp,s)}}
 A.nG.prototype={}
 A.aCT.prototype={
-$1(a){return new A.nG("http://101.237.129.72:8000","ws://101.237.129.72:8000/ws/chronicles")},
+$1(a){return new A.nG("http://101.237.129.72:8000","http://101.237.129.72:8000/ws/chronicles")},
 $S:573}
 A.aDv.prototype={
 $1(a){var s,r=A.aUt(a.c7($.aIN(),t.ne).a,B.FZ,B.G5),q=new A.OE(A.b([B.CN],t.i6))

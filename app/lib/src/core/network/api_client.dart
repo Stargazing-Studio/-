@@ -1,15 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
-import 'package:dio/browser.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:ling_yan_tian_ji/src/core/network/http_adapter_stub.dart'
+    if (dart.library.html)
+        'package:ling_yan_tian_ji/src/core/network/http_adapter_web.dart'
+    if (dart.library.io)
+        'package:ling_yan_tian_ji/src/core/network/http_adapter_io.dart';
 
 import 'package:ling_yan_tian_ji/src/core/config/app_config.dart';
 import 'package:ling_yan_tian_ji/src/features/common/models/game_entities.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(appConfigProvider);
-  final dio = Dio(
+  var dio = Dio(
     BaseOptions(
       baseUrl: config.apiBaseUrl,
       // 提高默认超时，避免 AI 初始化长耗时导致失败
@@ -17,10 +21,7 @@ final dioProvider = Provider<Dio>((ref) {
       receiveTimeout: const Duration(seconds: 90),
     ),
   );
-  // Web 端携带 Cookie，确保 /profile 能设置与读取 player_id
-  if (kIsWeb) {
-    dio.httpClientAdapter = BrowserHttpClientAdapter()..withCredentials = true;
-  }
+  dio = configureDioForPlatform(dio);
   // 轻量日志，便于确认 /profile 是否发出
   dio.interceptors.add(
     InterceptorsWrapper(

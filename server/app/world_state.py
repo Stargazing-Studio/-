@@ -170,3 +170,13 @@ class WorldStateStore:
                 indent=2,
             )
             self._path.write_text(serialized, encoding="utf-8")
+
+    def clear(self) -> None:
+        """清空当前世界状态并删除存档文件。"""
+        with self._lock:
+            self._state = None
+            try:
+                if self._path.exists():
+                    self._path.unlink()
+            except Exception:
+                pass

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:ling_yan_tian_ji/src/core/network/api_client.dart';
+import 'package:ling_yan_tian_ji/src/core/storage/local_cache.dart';
 import 'package:ling_yan_tian_ji/src/features/common/data/mock_data.dart';
 import 'package:ling_yan_tian_ji/src/features/common/models/game_entities.dart';
 import 'package:ling_yan_tian_ji/src/features/home/application/command_center_controller.dart';
 import 'package:ling_yan_tian_ji/src/features/home/application/live_updates_controller.dart';
-import 'package:ling_yan_tian_ji/src/features/home/application/log_filter_controller.dart';
+// 移除事件筛选与日志叙述所需的筛选控制器引用
 import 'package:ling_yan_tian_ji/src/shared/widgets/loading_animations.dart';
 import 'package:ling_yan_tian_ji/src/shared/widgets/interactive_animations.dart';
 import 'package:ling_yan_tian_ji/src/shared/widgets/main_navigation_bar.dart';
@@ -25,12 +27,75 @@ class HomePage extends ConsumerWidget {
     // 现按需求移除，事件回响请在“事件编年史”的列表与头部信息中查看。
 
     final profileState = ref.watch(playerProfileProvider);
-    final logsState = ref.watch(filteredLogsProvider);
-    final availableTags = ref.watch(availableLogTagsProvider);
-    final activeFilters = ref.watch(logFilterProvider);
+    // 删除事件叙述与筛选：不再读取日志相关 Provider
     final commandState = ref.watch(homeCommandControllerProvider);
     final liveState = ref.watch(homeLiveUpdatesProvider);
-
+    // 显式“开始修行”入口：手动调用 /profile 完成玩家初始化（设置 Cookie）
+    Future<void> _initializePlayer() async {
+      // 显式加载遮罩：直到玩家档案与初试事件生成完成（/profile 返回）
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => Dialog(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2.8),
+                ),
+                const SizedBox(width: 16),
+                const Text('正在生成初始角色与事件…'),
+              ],
+            ),
+          ),
+        ),
+      );
+      try {
+        final api = ref.read(apiClientProvider);
+        await api.fetchProfile();
+        // 刷新并等待 Provider 完成，确保 UI 同步
+        ref.invalidate(playerProfileProvider);
+        await ref.read(playerProfileProvider.future);
+        // 刷新编年史（若 WS 到达稍晚，确保时间线已可见）
+        try {
+          await ref.read(chronicleLogsProvider.notifier).refresh();
+        } catch (_) {}
+        // 保存本地缓存（player_id + 档案），便于后续快速恢复
+        try {
+          final api2 = ref.read(apiClientProvider);
+          final pid = await api2.whoAmI();
+          if (pid != null) {
+            await LocalCache.savePlayerId(pid);
+            final profileNow = await ref.read(playerProfileProvider.future);
+            await LocalCache.saveProfile(pid, profileNow);
+          }
+        } catch (_) {}
+        // 重新连接实时通道以携带新的 Cookie（加入玩家私有频道）
+        try {
+          await ref.read(homeLiveUpdatesProvider.notifier).reconnect();
+        } catch (_) {}
+        // 成功提示
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('玩家已初始化')),
+        );
+      } catch (e) {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('初始化失败：$e')),
+        );
+      } finally {
+        // ignore: use_build_context_synchronously
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      }
+    }
     final isSocketReady = liveState.maybeWhen(
       data: (state) => state.status == HomeSocketStatus.connected,
       orElse: () => false,
@@ -49,44 +114,21 @@ class HomePage extends ConsumerWidget {
             onPressed: () => context.go('/companions'),
             tooltip: '灵仆灵宠',
           ),
+          // 新增：开始修行按钮（初始化玩家信息）
+          IconButton(
+            icon: const Icon(Icons.play_circle_outline),
+            onPressed: _initializePlayer,
+            tooltip: '开始修行',
+          ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _DialogueHeader(
-              status: liveState.valueOrNull?.status ??
-                  liveState.when(
-                    data: (value) => value.status,
-                    loading: () => HomeSocketStatus.connecting,
-                    error: (_, __) => HomeSocketStatus.disconnected,
-                  ),
-              lastEvent: liveState.valueOrNull?.lastEvent,
-              disconnectReason: liveState.valueOrNull?.disconnectReason,
-            ),
-            const SizedBox(height: 12),
-            if (availableTags.isNotEmpty) ...[
-              _LogFilterBar(
-                tags: availableTags,
-                activeFilters: activeFilters,
-                onToggle: (tag) =>
-                    ref.read(logFilterProvider.notifier).toggleTag(tag),
-                onClear: () => ref.read(logFilterProvider.notifier).clear(),
-              ),
-              const SizedBox(height: 8),
-            ],
-                        Expanded(
-              child: _LogsSection(
-                logsState: logsState,
-                onRetry: () async {
-                  await ref.read(chronicleLogsProvider.notifier).refresh();
-                },
-                isLoading: commandState.isSubmitting,
-              ),
-            ),
-            const SizedBox(height: 12),
+            // 聊天消息列表（从旧到新）
+            Expanded(child: _ChatList(commandState: commandState)),
+            const SizedBox(height: 8),
             _CommandSection(
               profileState: profileState,
               commandState: commandState,
@@ -101,104 +143,7 @@ class HomePage extends ConsumerWidget {
 }
 
 
-class _DialogueHeader extends StatelessWidget {
-  const _DialogueHeader({
-    required this.status,
-    required this.lastEvent,
-    this.disconnectReason,
-  });
-
-  final HomeSocketStatus status;
-  final LiveUpdateEvent? lastEvent;
-  final String? disconnectReason;
-
-  String get _statusLabel {
-    switch (status) {
-      case HomeSocketStatus.connected:
-        return '天机连线：已接通';
-      case HomeSocketStatus.connecting:
-        return '天机连线：初始化中';
-      case HomeSocketStatus.disconnected:
-        return '天机连线：已断开';
-    }
-  }
-
-  Color get _statusColor {
-    switch (status) {
-      case HomeSocketStatus.connected:
-        return const Color(0xFF26A69A);
-      case HomeSocketStatus.connecting:
-        return const Color(0xFFF6C147);
-      case HomeSocketStatus.disconnected:
-        return const Color(0xFFE57373);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final latest = lastEvent;
-    final summary =
-        latest?.summary ?? '尚无最新回响，向天机提出你的第一个问题吧。';
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _statusColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: _statusColor.withValues(alpha: 0.4)),
-                  ),
-                  child: Text(
-                    _statusLabel,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: _statusColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    latest?.title ?? '天机灵筏已就绪',
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              summary,
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.4),
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (status == HomeSocketStatus.disconnected &&
-                disconnectReason != null) ...[
-              const SizedBox(height: 10),
-              Text(
-                '提示：$disconnectReason',
-                style: theme.textTheme.bodySmall
-                    ?.copyWith(color: const Color(0xFFE57373)),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
+// 头部不再展示初始事件，仅以聊天列表承载内容
 
 class _CommandSection extends ConsumerWidget {
   const _CommandSection({
@@ -229,6 +174,7 @@ class _CommandSection extends ConsumerWidget {
       error: (error, stackTrace) => _ErrorPane(
         message: '指令通道未就绪',
         detail: error.toString(),
+        actionLabel: '开始', // 明确“开始”动作以初始化玩家
         onRetry: () async {
           ref.invalidate(playerProfileProvider);
           await ref.read(playerProfileProvider.future);
@@ -238,179 +184,102 @@ class _CommandSection extends ConsumerWidget {
   }
 }
 
-class _LogsSection extends StatelessWidget {
-  const _LogsSection({
-    required this.logsState,
-    required this.onRetry,
-    required this.isLoading,
-  });
+class _ChatList extends StatefulWidget {
+  const _ChatList({required this.commandState});
 
-  final AsyncValue<List<ChronicleLog>> logsState;
-  final Future<void> Function() onRetry;
-  final bool isLoading;
+  final HomeCommandState commandState;
 
   @override
-  Widget build(BuildContext context) {
-    return logsState.when(
-      data: (logs) => _NarrativeFeed(
-        logs: logs,
-        isLoading: isLoading,
-      ),
-      loading: () => const _LoadingPane(message: '正在同步事件流…'),
-      error: (error, _) => _ErrorPane(
-        message: '事件流暂不可用',
-        detail: error.toString(),
-        onRetry: onRetry,
-      ),
-    );
-  }
+  State<_ChatList> createState() => _ChatListState();
 }
 
-class _NarrativeFeed extends StatelessWidget {
-  const _NarrativeFeed({
-    required this.logs,
-    required this.isLoading,
-  });
+class _ChatListState extends State<_ChatList> {
+  final _controller = ScrollController();
+  int _prevLength = 0;
 
-  final List<ChronicleLog> logs;
-  final bool isLoading;
+  void _scrollToBottom() {
+    if (!_controller.hasClients) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_controller.hasClients) return;
+      _controller.animateTo(
+        _controller.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
 
   @override
-  Widget build(BuildContext context) {
-    if (logs.isEmpty) {
-      return const _EmptyState(message: '暂无天机回响，尝试发起新的询问。');
+  void initState() {
+    super.initState();
+    _prevLength = widget.commandState.history.length;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  @override
+  void didUpdateWidget(covariant _ChatList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final cur = widget.commandState.history.length;
+    if (cur != _prevLength) {
+      _prevLength = cur;
+      _scrollToBottom();
     }
-
-    final itemCount = logs.length + (isLoading ? 1 : 0);
-
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: ListView.builder(
-          reverse: true,
-          padding: const EdgeInsets.only(bottom: 4),
-          physics: const BouncingScrollPhysics(),
-          itemCount: itemCount,
-          itemBuilder: (context, index) {
-            if (isLoading && index == 0) {
-              return const _DialogueTypingIndicator();
-            }
-            final logIndex = isLoading ? index - 1 : index;
-            final log = logs[logIndex];
-            return Padding(
-              padding:
-                  EdgeInsets.only(bottom: logIndex == logs.length - 1 ? 0 : 14),
-              child: _DialogueBubble(log: log),
-            );
-          },
-        ),
-      ),
-    );
   }
-}
 
-class _DialogueBubble extends StatelessWidget {
-  const _DialogueBubble({required this.log});
-
-  final ChronicleLog log;
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final timeLabel = _historyTimestampFormat.format(log.timestamp.toLocal());
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    final items = widget.commandState.history.reversed.toList(); // 从旧到新
+    return ListView.builder(
+      controller: _controller,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: items.length,
+      itemBuilder: (ctx, i) {
+        final rec = items[i];
+        final hasUser = rec.content.trim().isNotEmpty;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(Icons.auto_awesome, color: Color(0xFF5C6BC0), size: 18),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                log.title,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
+            if (hasUser)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF5C6BC0),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(rec.content, style: const TextStyle(color: Colors.white, height: 1.4)),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              timeLabel,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                constraints: const BoxConstraints(maxWidth: 520),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(rec.feedback, style: const TextStyle(height: 1.5)),
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 8),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: const Color(0x1A5C6BC0),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              log.summary,
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
-            ),
-          ),
-        ),
-        if (log.tags.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            children: log.tags
-                .map(
-                  (tag) => Chip(
-                    label: Text('#$tag'),
-                    visualDensity: VisualDensity.compact,
-                    backgroundColor: const Color(0x1426A69A),
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-      ],
+        );
+      },
     );
   }
 }
 
-class _DialogueTypingIndicator extends StatelessWidget {
-  const _DialogueTypingIndicator();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(strokeWidth: 2.2),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              '天机推演中……',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// 删除事件叙述相关组件：_LogsSection/_NarrativeFeed/_DialogueBubble/_DialogueTypingIndicator
 
 
 
@@ -464,11 +333,13 @@ class _ErrorPane extends StatelessWidget {
     required this.message,
     required this.detail,
     required this.onRetry,
+    this.actionLabel = '重试',
   });
 
   final String message;
   final String detail;
   final Future<void> Function() onRetry;
+  final String actionLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -497,8 +368,8 @@ class _ErrorPane extends StatelessWidget {
               const SizedBox(height: 16),
               FilledButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
-                label: const Text('重试'),
+                icon: const Icon(Icons.play_arrow_rounded),
+                label: Text(actionLabel),
               ),
             ],
           ),
@@ -508,49 +379,7 @@ class _ErrorPane extends StatelessWidget {
   }
 }
 
-class _LogFilterBar extends StatelessWidget {
-  const _LogFilterBar({
-    required this.tags,
-    required this.activeFilters,
-    required this.onToggle,
-    required this.onClear,
-  });
-
-  final List<String> tags;
-  final Set<String> activeFilters;
-  final ValueChanged<String> onToggle;
-  final VoidCallback onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    if (tags.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        const Text('事件筛选：', style: TextStyle(fontWeight: FontWeight.w600)),
-        ...tags.map((tag) {
-          final selected = activeFilters.contains(tag);
-          return FilterChip(
-            label: Text(tag),
-            selected: selected,
-            onSelected: (_) => onToggle(tag),
-            selectedColor: const Color(0x6626A69A),
-          );
-        }),
-        if (activeFilters.isNotEmpty)
-          TextButton.icon(
-            onPressed: onClear,
-            icon: const Icon(Icons.refresh),
-            label: const Text('重置筛选'),
-          ),
-      ],
-    );
-  }
-}
+// 删除事件筛选组件 _LogFilterBar
 
 class _CommandBar extends StatefulWidget {
   const _CommandBar({
@@ -669,57 +498,7 @@ class _CommandBarState extends State<_CommandBar> {
               ),
             ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              CultivationInteractions.spiritRipple(
-                child: _QuickCommandChip(
-                  label: '秘境状况',
-                  enabled: canSubmit,
-                  onTap: () =>
-                      _applyQuickCommand('查询丹霞秘境当前灵潮强度。'),
-                ),
-                rippleColor: const Color(0xFF26A69A),
-              ),
-              CultivationInteractions.spiritRipple(
-                child: _QuickCommandChip(
-                  label: '飞升进展',
-                  enabled: canSubmit,
-                  onTap: () =>
-                      _applyQuickCommand('汇报飞升试炼排队情况。'),
-                ),
-                rippleColor: const Color(0xFF5C6BC0),
-              ),
-              CultivationInteractions.spiritRipple(
-                child: _QuickCommandChip(
-                  label: '灵仆状态',
-                  enabled: canSubmit,
-                  onTap: () =>
-                      _applyQuickCommand('询问紫曜灵仆·沐瑶的疲劳与心情。'),
-                ),
-                rippleColor: const Color(0xFFE91E63),
-              ),
-              CultivationInteractions.spiritRipple(
-                child: _QuickCommandChip(
-                  label: '功法调整',
-                  enabled: canSubmit,
-                  onTap: () =>
-                      _applyQuickCommand('分析玄霜裂空剑与紫微星阙大阵的协同策略。'),
-                ),
-                rippleColor: const Color(0xFFFFD54F),
-              ),
-              CultivationInteractions.hoverGlow(
-                child: _QuickCommandChip(
-                  label: '事件日志',
-                  enabled: true,
-                  // 修复无法返回主页：使用 push 保留返回栈
-                  onTap: () => context.push('/chronicles'),
-                ),
-                glowColor: const Color(0xFF9C27B0),
-              ),
-            ],
-          ),
+          // 删除快捷指令区块
           // 根据需求：移除“指令历史”展示与再提交入口，仅保留当前会话输入与事件编年史。
         ],
       ),
@@ -738,49 +517,10 @@ class _CommandBarState extends State<_CommandBar> {
     }
   }
 
-  Future<void> _handleResubmit(String text) async {
-    _controller
-      ..text = text
-      ..selection = TextSelection.fromPosition(
-        TextPosition(offset: text.length),
-      );
-    await _handleSubmit();
-  }
-
-  void _applyQuickCommand(String text) {
-    _controller
-      ..text = text
-      ..selection = TextSelection.fromPosition(
-        TextPosition(offset: text.length),
-      );
-    if (!_isExpanded) {
-      setState(() => _isExpanded = true);
-    }
-    _focusNode.requestFocus();
-  }
+  // 删除再次提交与快捷指令辅助方法
 }
 
-class _QuickCommandChip extends StatelessWidget {
-  const _QuickCommandChip({
-    required this.label,
-    required this.onTap,
-    required this.enabled,
-  });
-
-  final String label;
-  final VoidCallback onTap;
-  final bool enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return ActionChip(
-      label: Text(label),
-      onPressed: enabled ? onTap : null,
-      backgroundColor: const Color(0x3326A69A),
-      labelStyle: const TextStyle(fontWeight: FontWeight.w600),
-    );
-  }
-}
+// 删除快捷指令组件 _QuickCommandChip
 
 
 

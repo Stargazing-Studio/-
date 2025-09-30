@@ -1,0 +1,65 @@
+{
+  "profile": {
+    "id": "p_7e54d7e5be2e",
+    "name": "李凡尘",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "凡人坊市": 10,
+      "村落守卫": 0
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_fanren",
+        "name": "凡人吐纳术",
+        "type": "support",
+        "mastery": 15,
+        "synergies": []
+      },
+      {
+        "id": "tech_jiben_quan",
+        "name": "基本拳法",
+        "type": "combat",
+        "mastery": 5,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 5,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_ymm",
+  "spirit_stones": 45,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "防具",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，聊胜于无。"
+    },
+    {
+      "id": "item_shichai",
+      "name": "劣质木杖",
+      "category": "武器",
+      "quantity": 1,
+      "description": "捡来的木棍，可以防身。"
+    },
+    {
+      "id": "item_yanglingdan_xiaopin",
+      "name": "小品养灵丹",
+      "category": "丹药",
+      "quantity": 2,
+      "description": "凡人阶段略有裨益的丹药，用于恢复体力。"
+    }
+  ],
+  "blood_percent": 100
+}

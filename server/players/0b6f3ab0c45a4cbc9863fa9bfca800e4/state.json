@@ -1,0 +1,64 @@
+{
+  "profile": {
+    "id": "p_0b6f3ab0c45a",
+    "name": "柳逸尘",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "凡人商会": 0,
+      "当地官府": 5
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 8
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 15,
+        "synergies": []
+      },
+      {
+        "id": "tech_fist_crude",
+        "name": "粗浅拳法",
+        "type": "combat",
+        "mastery": 10,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 5,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 15,
+  "inventory": [
+    {
+      "id": "item_robe_coarse",
+      "name": "粗布道袍",
+      "category": "防具",
+      "quantity": 1,
+      "description": "凡人阶段的简单衣物，略有保暖作用。"
+    },
+    {
+      "id": "item_hoe_herb",
+      "name": "采药锄",
+      "category": "工具",
+      "quantity": 1,
+      "description": "用于采集草药的简陋工具。"
+    },
+    {
+      "id": "item_talisman_minor",
+      "name": "清心符箓",
+      "category": "消耗品",
+      "quantity": 2,
+      "description": "能略微平复心绪的低阶符箓，效用微弱。"
+    }
+  ],
+  "blood_percent": 100
+}

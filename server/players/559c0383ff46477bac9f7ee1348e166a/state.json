@@ -1,0 +1,67 @@
+{
+  "profile": {
+    "id": "p_559c0383ff46",
+    "name": "李清风",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 10,
+      "村落": 5
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_01",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_boduan",
+        "name": "凡品波澜掌",
+        "type": "combat",
+        "mastery": 2,
+        "synergies": []
+      }
+    ],
+    "achievements": [
+      "初入尘世"
+    ],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 15,
+  "inventory": [
+    {
+      "id": "item_shifu_ling",
+      "name": "师父的信物",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "一块雕刻着云纹的玉佩，似乎隐藏着秘密。"
+    },
+    {
+      "id": "item_herbal_powder",
+      "name": "基础疗伤散",
+      "category": "药品",
+      "quantity": 3,
+      "description": "可以敷于伤口，减轻凡人外伤。"
+    },
+    {
+      "id": "item_straw_hat",
+      "name": "草编斗笠",
+      "category": "装备",
+      "quantity": 1,
+      "description": "用来遮阳避雨的普通斗笠。"
+    }
+  ],
+  "blood_percent": 100
+}

@@ -1,18 +1,44 @@
 import 'package:dio/dio.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'package:dio/browser.dart';
 
 import 'package:ling_yan_tian_ji/src/core/config/app_config.dart';
 import 'package:ling_yan_tian_ji/src/features/common/models/game_entities.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(appConfigProvider);
-  return Dio(
+  final dio = Dio(
     BaseOptions(
       baseUrl: config.apiBaseUrl,
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 5),
+      // 提高默认超时，避免 AI 初始化长耗时导致失败
+      connectTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 90),
     ),
   );
+  // Web 端携带 Cookie，确保 /profile 能设置与读取 player_id
+  if (kIsWeb) {
+    dio.httpClientAdapter = BrowserHttpClientAdapter()..withCredentials = true;
+  }
+  // 轻量日志，便于确认 /profile 是否发出
+  dio.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (options, handler) {
+        debugPrint('[DIO] => ${options.method} ${options.uri}');
+        handler.next(options);
+      },
+      onError: (e, handler) {
+        debugPrint('[DIO] <= ERROR ${e.requestOptions.method} ${e.requestOptions.uri} ${e.response?.statusCode}');
+        handler.next(e);
+      },
+      onResponse: (resp, handler) {
+        debugPrint('[DIO] <= ${resp.requestOptions.method} ${resp.requestOptions.uri} ${resp.statusCode}');
+        handler.next(resp);
+      },
+    ),
+  );
+  return dio;
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {
@@ -28,6 +54,11 @@ class ApiClient {
   Future<PlayerProfile> fetchProfile() async {
     final response = await _dio.get<Map<String, dynamic>>('/profile');
     return PlayerProfile.fromJson(response.data!);
+  }
+
+  Future<String?> whoAmI() async {
+    final response = await _dio.get<Map<String, dynamic>>('/whoami');
+    return (response.data ?? const {})['player_id'] as String?;
   }
 
   Future<List<Companion>> fetchCompanions() async {
@@ -65,6 +96,21 @@ class ApiClient {
     return response.data!
         .map((item) => ChronicleLog.fromJson(item as Map<String, dynamic>))
         .toList();
+  }
+
+  // Admin: purge all data
+  Future<Map<String, dynamic>> purgeAll({bool rebuild = false}) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/admin/purge',
+      queryParameters: {'rebuild': rebuild},
+    );
+    return res.data ?? const {};
+  }
+
+  // Admin: reset current player only
+  Future<Map<String, dynamic>> resetCurrentPlayer() async {
+    final res = await _dio.get<Map<String, dynamic>>('/admin/reset/player');
+    return res.data ?? const {};
   }
 
   Future<List<CommandHistoryEntry>> fetchCommandHistory() async {

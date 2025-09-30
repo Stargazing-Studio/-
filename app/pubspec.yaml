@@ -17,6 +17,7 @@ dependencies:
   dio: ^5.7.0
   web_socket_channel: ^2.4.0
   intl: ^0.19.0
+  shared_preferences: ^2.3.2
   # 动画和图片支持
   lottie: ^3.1.2
   cached_network_image: ^3.4.1

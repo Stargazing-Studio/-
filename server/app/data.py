@@ -18,7 +18,189 @@ from .schemas import (
     PlayerProfile,
     SecretRealm,
 )
-from .world_state import AuctionHouse, Shop, WorldState, WorldStateStore
+from .world_state import AuctionHouse, Shop, WorldState, WorldStateStore, PlayerState
+from pathlib import Path
+import json as _json
+import random as _random
+import shutil as _shutil
+import os as _os
+
+
+class PlayerStore:
+    """按浏览器/客户端区分的玩家状态存储（世界共享，玩家数据独立）。
+
+    - 存储路径：server/players/{player_id}.json
+    - 初始数据：基于当前世界的 player 模板复制，并随机选择一个地图节点作为起点。
+    - 仅管理 PlayerState，不改动全局 WorldState。
+    """
+
+    def __init__(self, root: Path) -> None:
+        self._root = root
+        self._root.mkdir(parents=True, exist_ok=True)
+
+    # 新版目录结构：players/{pid}/state.json, logs.json, commands.json
+    def _dir_for(self, player_id: str) -> Path:
+        d = self._root / player_id
+        d.mkdir(parents=True, exist_ok=True)
+        return d
+
+    def _state_path(self, player_id: str) -> Path:
+        return self._dir_for(player_id) / "state.json"
+
+    def _logs_path(self, player_id: str) -> Path:
+        return self._dir_for(player_id) / "logs.json"
+
+    def _commands_path(self, player_id: str) -> Path:
+        return self._dir_for(player_id) / "commands.json"
+
+    # 兼容旧版：players/{pid}.json
+    def _legacy_state_path(self, player_id: str) -> Path:
+        return self._root / f"{player_id}.json"
+
+    def exists(self, player_id: str) -> bool:
+        return self._state_path(player_id).exists() or self._legacy_state_path(player_id).exists()
+
+    def load(self, player_id: str) -> PlayerState:
+        path = self._state_path(player_id)
+        if not path.exists():
+            legacy = self._legacy_state_path(player_id)
+            if not legacy.exists():
+                raise FileNotFoundError(f"player {player_id} not found")
+            # 迁移旧版为新目录结构
+            data = _json.loads(legacy.read_text(encoding="utf-8"))
+            state = PlayerState.model_validate(data)
+            self.save(player_id, state)
+            return state
+        data = _json.loads(path.read_text(encoding="utf-8"))
+        return PlayerState.model_validate(data)
+
+    def save(self, player_id: str, state: PlayerState) -> None:
+        path = self._state_path(player_id)
+        serialized = _json.dumps(state.model_dump(mode="json"), ensure_ascii=False, indent=2)
+        path.write_text(serialized, encoding="utf-8")
+
+    def create_from_world(self, player_id: str, world: WorldState) -> PlayerState:
+        template = world.player
+        # 随机起点：从地图节点中随机选择一个已存在的 id（避免贴合要求的 discovered 逻辑，保持独立）
+        nodes = world.map_state.nodes
+        start_id = nodes[_random.randrange(0, len(nodes))].id if nodes else template.current_location
+        new_state = PlayerState(
+            profile=template.profile,
+            current_location=start_id,
+            spirit_stones=template.spirit_stones,
+            inventory=list(template.inventory),
+            blood_percent=template.blood_percent,
+        )
+        self.save(player_id, new_state)
+        return new_state
+
+    # ===== 玩家个人编年史（独立于世界） =====
+    def list_logs(self, player_id: str) -> list[ChronicleLog]:
+        p = self._logs_path(player_id)
+        if not p.exists():
+            return []
+        try:
+            raw = _json.loads(p.read_text(encoding="utf-8"))
+            return [ChronicleLog.model_validate(item) for item in raw]
+        except Exception:
+            return []
+
+    def append_log(self, player_id: str, event: ChronicleLog) -> None:
+        items = self.list_logs(player_id)
+        items.insert(0, event)
+        # 截断避免无限增长
+        items = items[: GameRepository._max_chronicle_entries]
+        p = self._logs_path(player_id)
+        data = [e.model_dump(mode="json") for e in items]
+        p.write_text(_json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # ===== 玩家个人指令历史 =====
+    def list_commands(self, player_id: str) -> list[CommandResult]:
+        p = self._commands_path(player_id)
+        if not p.exists():
+            return []
+        try:
+            raw = _json.loads(p.read_text(encoding="utf-8"))
+            return [CommandResult.model_validate(item) for item in raw]
+        except Exception:
+            return []
+
+    def append_command(self, player_id: str, cmd: CommandResult) -> None:
+        items = self.list_commands(player_id)
+        items.insert(0, cmd)
+        items = items[: GameRepository._max_commands]
+        p = self._commands_path(player_id)
+        data = [c.model_dump(mode="json") for c in items]
+        p.write_text(_json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def list_players_at(self, location_id: str, exclude_pid: str | None = None) -> list[tuple[str, PlayerState]]:
+        players: list[tuple[str, PlayerState]] = []
+        # 新版目录结构优先
+        for path in self._root.glob("*/state.json"):
+            pid = path.parent.name
+            if exclude_pid and pid == exclude_pid:
+                continue
+            try:
+                data = _json.loads(path.read_text(encoding="utf-8"))
+                state = PlayerState.model_validate(data)
+                if state.current_location == location_id:
+                    players.append((pid, state))
+            except Exception:
+                continue
+        # 兼容旧版扁平文件
+        if not players:
+            for opath in self._root.glob("*.json"):
+                pid = opath.stem
+                if exclude_pid and pid == exclude_pid:
+                    continue
+                try:
+                    state = self.load(pid)
+                    if state.current_location == location_id:
+                        players.append((pid, state))
+                except Exception:
+                    continue
+        return players
+
+    # ===== 管理工具 =====
+    def list_ids(self) -> list[str]:
+        ids: list[str] = []
+        # 新版目录结构
+        for d in self._root.iterdir():
+            if d.is_dir() and (d / "state.json").exists():
+                ids.append(d.name)
+        # 兼容旧版扁平文件
+        for p in self._root.glob("*.json"):
+            pid = p.stem
+            if pid not in ids:
+                ids.append(pid)
+        return ids
+
+    def delete_player(self, player_id: str) -> None:
+        # 不要通过 _dir_for 创建目录再删，直接定位目录路径
+        d = self._root / player_id
+        try:
+            if d.exists():
+                _shutil.rmtree(d)
+            # 兼容旧版扁平文件
+            legacy = self._legacy_state_path(player_id)
+            if legacy.exists():
+                legacy.unlink()
+        except Exception:
+            pass
+
+    def clear_all(self) -> None:
+        try:
+            if self._root.exists():
+                for entry in self._root.iterdir():
+                    try:
+                        if entry.is_dir():
+                            _shutil.rmtree(entry)
+                        elif entry.is_file():
+                            entry.unlink()
+                    except Exception:
+                        continue
+        except Exception:
+            pass
 
 
 class GameRepository:

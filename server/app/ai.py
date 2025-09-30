@@ -147,6 +147,10 @@ class GeminiClient:
     def available(self) -> bool:
         return self._enabled
 
+    @property
+    def model_name(self) -> Optional[str]:
+        return getattr(self, "_model_name", None)
+
     async def generate_command_feedback(self, content: str, context: str | None = None) -> Optional[str]:
         """Call Gemini Flash to craft narrative feedback for a player command."""
         if not self._enabled or not self._model:
@@ -206,5 +210,47 @@ class GeminiClient:
         try:
             response = await asyncio.to_thread(self._model.generate_content, prompt)
             return (response.text or "").strip() or None
+        except Exception:
+            return None
+
+    # ===== 生成玩家与初始事件（便于服务端直接调用） =====
+    async def generate_player_state_text(self, prompt: str) -> Optional[str]:
+        """基于给定 Prompt 生成 PlayerState 的 JSON 文本。
+
+        说明：与 generate_world_seed 一致的底层实现，这里单独暴露便于语义区分与日志检索。
+        """
+        return await self.generate_world_seed(prompt)
+
+    async def generate_initial_event_summary(
+        self,
+        player_name: str,
+        realm: str,
+        guild: str,
+        location_name: str,
+        seed_hint: str | None = None,
+    ) -> Optional[str]:
+        """生成玩家“初试事件”的叙事摘要（中文，≥200字）。
+
+        - 必须以“天道/天机”视角，古风文体；
+        - 交代姓名、出身（凡人阶段），嵌入一则“天赋/体质/眷顾”设定与简要机制；
+        - 围绕当前地点 {location_name} 给出一个具体抉择场景；
+        - 结尾以一句简短发问引导下一步；
+        - 返回纯文本摘要（不包含 JSON 或 Markdown）。
+        """
+        if not self._enabled or not self._model:
+            return None
+        seed_line = f"（签名：{seed_hint}）" if seed_hint else ""
+        prompt = (
+            "你是修仙世界的天机灵枢，请为新入世之人写一段‘初试事件’叙事，"
+            "要求：中文古风、第二或全知视角、细节充足（≥200字），不得给出选项列表；"
+            "须交代姓名/出身（仍为凡人阶段）、嵌入一则‘天赋/体质/眷顾’及其简单机制；"
+            "围绕其当前所在之地引出一个具体抉择场景；结尾以一句简短发问引导下一步。\n"
+            f"姓名：{player_name}；境界：{realm}；所属/羁绊：{guild}；所在：{location_name}。{seed_line}\n"
+            "请只输出叙事正文，不要任何解释。"
+        )
+        try:
+            response = await asyncio.to_thread(self._model.generate_content, prompt)
+            text = (response.text or "").strip()
+            return text or None
         except Exception:
             return None

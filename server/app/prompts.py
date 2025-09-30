@@ -190,3 +190,84 @@ INIT_WORLD_PROMPT = """
   "nodes": [ ... ]
 }
 """
+
+# 仅生成玩家个人起始信息（多人同服，世界共享）。
+# 必须输出一个合法 JSON 对象（无注释/无 markdown），结构为 PlayerState：
+# {
+#   "profile": {  # PlayerProfile
+#     "id": string,
+#     "name": string,
+#     "realm": string,              # 必须为凡人阶段，如 “凡人九品”
+#     "guild": string,
+#     "faction_reputation": { [string]: int },
+#     "attributes": { [string]: int },
+#     "techniques": [ { id, name, type: "core|combat|support|movement", mastery: 0..100, synergies: [string] } ],
+#     "achievements": [string],
+#     "ascension_progress": { stage: string, score: int, next_milestone: string }
+#   },
+#   "current_location": string,      # 必须是现有节点 id（见下文节点清单）
+#   "spirit_stones": int,            # 0..200 之间合理整数
+#   "inventory": [ { id, name, category, quantity:int, description } ],
+#   "blood_percent": 100
+# }
+# 约束：
+# - 仅生成“玩家个人信息”，不得改动世界；不得泄露其他玩家信息；
+# - current_location 必须来自提供的节点清单（id 列表），且不要使用未出现的 id；
+# - 文风古意，但字段值为纯文本；数值必须是数字类型；不得输出 null；
+# - techniques[].type 必须在 core|combat|support|movement 四选一；
+# - 角色仍为凡人阶段，禁止直接“入宗门/进入修仙”。
+
+INIT_PLAYER_PROMPT = """
+你是“灵衍天纪”世界的天机灵枢。请仅输出一个合法 JSON 对象，结构严格符合 PlayerState（见上方说明）。
+
+【严格输出要求（必须遵守）】
+1) 仅输出 JSON 本体（无 Markdown、无注释、无多余文本）。
+2) 字段类型必须与模型匹配：
+   - profile.id: string（必填）
+   - profile.name: string（必填）
+   - profile.realm: string（必填，必须为“凡人”，不得包含“九品/一品”等品级字样）
+   - profile.guild: string（可空字符串，但字段必须存在）
+   - profile.faction_reputation: object<string,int>
+   - profile.attributes: object<string,int>
+   - profile.techniques: array，元素为 {id,name,type,mastery,synergies[]}；type ∈ {core,combat,support,movement}；mastery 为 0..100 整数
+   - profile.achievements: array<string>
+   - profile.ascension_progress: {stage:string, score:int, next_milestone:string}
+   - current_location: string（必须是已给出的节点 id，禁止输出对象）
+   - spirit_stones: int（0..200）
+   - inventory: array，每项为 {id:string, name:string, category:string, quantity:int, description:string}
+   - blood_percent: int（通常 100）
+3) 禁止输出 null；如无内容，用空字符串/0/[]/{}；键名需与上方完全一致。
+4) 禁止把 techniques 写成字典；必须是数组。禁止把 current_location 写成对象。
+
+【设备签名（用于差异化随机，不要写进 JSON）】
+seed_hint: {seed_hint}
+
+【可用的 current_location.id】（从中任选其一作为起始地）：
+{nodes_brief}
+
+【最小合法示例（仅示意字段形态，严禁直接照抄下列值）】
+{
+  "profile": {
+    "id": "p_xxx", "name": "张三", "realm": "凡人", "guild": "",
+    "faction_reputation": {"坊市": 0},
+    "attributes": {"体魄": 5, "心性": 5},
+    "techniques": [
+      {"id": "tech_tuna", "name": "基础吐纳术", "type": "support", "mastery": 1, "synergies": []}
+    ],
+    "achievements": [],
+    "ascension_progress": {"stage": "凡人九品", "score": 0, "next_milestone": "炼气一阶"}
+  },
+  "current_location": "VILLAGE_01",
+  "spirit_stones": 12,
+  "inventory": [
+    {"id": "item_coarse_robe", "name": "粗布衣衫", "category": "杂物", "quantity": 1, "description": "常服"}
+  ],
+  "blood_percent": 100
+}
+
+【生成要求】
+- 仍为凡人阶段；给出合理的基础属性/声望/功法摘要；
+- 起始地点必须从上方 id 列表中选一个字符串；
+- 给出合理的起始灵石与少量背包；
+- 确保完全满足“严格输出要求”。
+"""

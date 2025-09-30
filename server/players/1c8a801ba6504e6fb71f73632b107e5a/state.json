@@ -1,0 +1,66 @@
+{
+  "profile": {
+    "id": "p_lqz_001",
+    "name": "李青竹",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "青云坊市": 10,
+      "凡人村落": 50
+    },
+    "attributes": {
+      "体魄": 8,
+      "心性": 7,
+      "悟性": 6,
+      "灵根": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_01",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_qingshen",
+        "name": "轻身法",
+        "type": "movement",
+        "mastery": 1,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 55,
+  "inventory": [
+    {
+      "id": "item_shifu",
+      "name": "粗麻道袍",
+      "category": "衣物",
+      "quantity": 1,
+      "description": "凡人穿着的简朴道袍。"
+    },
+    {
+      "id": "item_bigu",
+      "name": "辟谷丸",
+      "category": "丹药",
+      "quantity": 5,
+      "description": "服用后数日内可不食五谷。凡人常用。"
+    },
+    {
+      "id": "item_lingmu",
+      "name": "下品灵木枝",
+      "category": "材料",
+      "quantity": 2,
+      "description": "低阶符箓或阵法的基础材料。"
+    }
+  ],
+  "blood_percent": 100
+}

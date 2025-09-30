@@ -1,0 +1,63 @@
+{
+  "profile": {
+    "id": "p_lp_001",
+    "name": "陆平",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "凡人集市": 10
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_fist_crude",
+        "name": "粗浅拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 10,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 25,
+  "inventory": [
+    {
+      "id": "item_robe_coarse",
+      "name": "粗布麻衣",
+      "category": "衣物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，聊胜于无。"
+    },
+    {
+      "id": "item_dagger_iron",
+      "name": "生铁短匕",
+      "category": "武器",
+      "quantity": 1,
+      "description": "打铁铺中最常见的防身器具。"
+    },
+    {
+      "id": "item_herb_minor",
+      "name": "止血草",
+      "category": "药材",
+      "quantity": 3,
+      "description": "用于简单止血的外敷草药。"
+    }
+  ],
+  "blood_percent": 100
+}

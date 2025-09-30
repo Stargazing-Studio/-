@@ -7,6 +7,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:ling_yan_tian_ji/src/core/config/app_config.dart';
 import 'package:ling_yan_tian_ji/src/features/common/data/mock_data.dart';
 import 'package:ling_yan_tian_ji/src/features/common/models/game_entities.dart';
+import 'package:ling_yan_tian_ji/src/core/storage/local_cache.dart';
+import 'package:ling_yan_tian_ji/src/core/network/api_client.dart';
 
 final homeLiveUpdatesProvider = StateNotifierProvider<
     HomeLiveUpdatesController, AsyncValue<HomeLiveUpdatesState>>((ref) {
@@ -68,16 +70,42 @@ class HomeLiveUpdatesController
     }
     final type = data['type'] as String?;
     if (type == 'snapshot') {
+      // 1) 刷新时间线列表
       final items = (data['logs'] as List<dynamic>)
           .map((item) => ChronicleLog.fromJson(item as Map<String, dynamic>))
           .toList();
       _ref.read(chronicleLogsProvider.notifier).replaceAll(items);
+      // 2) 将最新一条作为最近事件，便于首页头部直接展示
+      final events = items
+          .map(
+            (log) => LiveUpdateEvent(
+              id: log.id,
+              title: log.title,
+              summary: log.summary,
+              tags: log.tags,
+              timestamp: log.timestamp,
+            ),
+          )
+          .toList();
       _updateState(
         (value) => value.copyWith(
           status: HomeSocketStatus.connected,
           lastHeartbeatAt: DateTime.now(),
+          recentEvents: events.take(6).toList(),
+          lastEvent: events.isNotEmpty ? events.first : value.lastEvent,
+          disconnectReason: null,
         ),
       );
+      // 持久化最新时间线（snapshot）
+      () async {
+        try {
+          final pid = await LocalCache.loadPlayerId() ?? await _ref.read(apiClientProvider).whoAmI();
+          if (pid != null) {
+            final logs = _ref.read(chronicleLogsProvider).valueOrNull ?? <ChronicleLog>[];
+            await LocalCache.saveLogs(pid, logs);
+          }
+        } catch (_) {}
+      }();
     } else if (type == 'chronicle_update') {
       final log = ChronicleLog.fromJson(data['log'] as Map<String, dynamic>);
       _ref.read(chronicleLogsProvider.notifier).prependLog(log);

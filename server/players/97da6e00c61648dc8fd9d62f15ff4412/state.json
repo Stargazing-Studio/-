@@ -1,0 +1,66 @@
+{
+  "profile": {
+    "id": "p_liqingyun_88",
+    "name": "李青云",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "灵溪村": 5,
+      "东市坊": 0
+    },
+    "attributes": {
+      "体魄": 8,
+      "心性": 7,
+      "根骨": 6,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_base",
+        "name": "基础吐纳法",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_punch_mortal",
+        "name": "凡人拳脚",
+        "type": "combat",
+        "mastery": 2,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 10,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_village_lx",
+  "spirit_stones": 55,
+  "inventory": [
+    {
+      "id": "item_robe_coarse",
+      "name": "粗麻布衫",
+      "category": "防具",
+      "quantity": 1,
+      "description": "凡人常穿的粗布衣服，没有什么防御力。"
+    },
+    {
+      "id": "item_ration_dry",
+      "name": "普通干粮",
+      "category": "消耗品",
+      "quantity": 3,
+      "description": "能填饱肚子，味道一般。"
+    },
+    {
+      "id": "item_hoe_herb",
+      "name": "采药锄",
+      "category": "工具",
+      "quantity": 1,
+      "description": "采摘凡草时使用的普通工具。"
+    }
+  ],
+  "blood_percent": 100
+}

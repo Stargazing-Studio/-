@@ -1,0 +1,71 @@
+{
+  "profile": {
+    "id": "p_zhaofeng",
+    "name": "赵风",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "凡人村落": 5,
+      "坊市": 0
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 8
+    },
+    "techniques": [
+      {
+        "id": "tech_jichutuna",
+        "name": "基础吐纳诀",
+        "type": "core",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_pujidaji",
+        "name": "普及打击术",
+        "type": "combat",
+        "mastery": 1,
+        "synergies": []
+      },
+      {
+        "id": "tech_yunti",
+        "name": "云提身法",
+        "type": "movement",
+        "mastery": 2,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 10,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 45,
+  "inventory": [
+    {
+      "id": "item_puyi",
+      "name": "粗布袍子",
+      "category": "服饰",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，聊胜于无。"
+    },
+    {
+      "id": "item_caoyao_low",
+      "name": "低阶草药",
+      "category": "药品",
+      "quantity": 3,
+      "description": "略有疗伤效果，主要用于凡人外伤。"
+    },
+    {
+      "id": "item_shouzha",
+      "name": "凡人手札",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "记录着一些凡人世界的地理信息和常识。"
+    }
+  ],
+  "blood_percent": 100
+}

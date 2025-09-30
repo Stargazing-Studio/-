@@ -1,0 +1,50 @@
+{
+  "profile": {
+    "id": "p_5c6c77931310",
+    "name": "柳逸尘",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 10,
+      "修真联盟": 0
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 8
+    },
+    "techniques": [
+      {
+        "id": "tech_basic_breathing",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 15,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_ymm",
+  "spirit_stones": 25,
+  "inventory": [
+    {
+      "id": "item_linen_robe",
+      "name": "麻布长袍",
+      "category": "衣物",
+      "quantity": 1,
+      "description": "凡人所穿的简陋长袍，蔽体之用。"
+    },
+    {
+      "id": "item_dried_herbs",
+      "name": "基础草药包",
+      "category": "材料",
+      "quantity": 5,
+      "description": "用于应对轻微伤势的普通药草，未经炼制。"
+    }
+  ],
+  "blood_percent": 100
+}

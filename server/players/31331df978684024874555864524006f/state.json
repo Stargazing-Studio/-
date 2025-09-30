@@ -1,0 +1,67 @@
+{
+  "profile": {
+    "id": "p_31331df97868",
+    "name": "柳逸",
+    "realm": "凡人九品",
+    "guild": "",
+    "faction_reputation": {
+      "集市商盟": 5,
+      "凌霄村": 0
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_basic_breath",
+        "name": "基础引气诀",
+        "type": "support",
+        "mastery": 10,
+        "synergies": []
+      },
+      {
+        "id": "tech_quick_dodge",
+        "name": "疾风步",
+        "type": "movement",
+        "mastery": 5,
+        "synergies": []
+      }
+    ],
+    "achievements": [
+      "初入江湖"
+    ],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 25,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_market_east",
+  "spirit_stones": 45,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "服饰",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，略有些磨损。"
+    },
+    {
+      "id": "item_travel_ration",
+      "name": "粗糙干粮",
+      "category": "消耗品",
+      "quantity": 5,
+      "description": "硬邦邦的饼子，能勉强果腹。"
+    },
+    {
+      "id": "item_common_dagger",
+      "name": "普通短匕",
+      "category": "武器",
+      "quantity": 1,
+      "description": "一把未经炼制的凡铁短匕，防身用。"
+    }
+  ],
+  "blood_percent": 100
+}

@@ -1,0 +1,65 @@
+{
+  "profile": {
+    "id": "p_li_qing_001",
+    "name": "李青",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 10,
+      "村落": 5
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "灵根": 4
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "core",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_fist_basic",
+        "name": "凡人拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人",
+      "score": 10,
+      "next_milestone": "炼气"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 45,
+  "inventory": [
+    {
+      "id": "item_robe_rough",
+      "name": "粗布道袍",
+      "category": "服饰",
+      "quantity": 1,
+      "description": "勉强能蔽体的道袍，沾染着凡尘气息。"
+    },
+    {
+      "id": "item_herb_basic",
+      "name": "凡品草药",
+      "category": "消耗品",
+      "quantity": 3,
+      "description": "疗治轻微外伤的凡间草药，效果聊胜于无。"
+    },
+    {
+      "id": "item_map_local",
+      "name": "简易地图",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "标示了周围村镇的粗略地图，缺乏灵气标注。"
+    }
+  ],
+  "blood_percent": 100
+}

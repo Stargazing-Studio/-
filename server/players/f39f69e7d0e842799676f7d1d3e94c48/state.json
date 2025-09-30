@@ -1,0 +1,66 @@
+{
+  "profile": {
+    "id": "p_lingyan_start_883",
+    "name": "林风眠",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "清风村": 5,
+      "凡人坊市": 0
+    },
+    "attributes": {
+      "体魄": 9,
+      "心性": 11,
+      "悟性": 6,
+      "气运": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳诀",
+        "type": "support",
+        "mastery": 3,
+        "synergies": []
+      },
+      {
+        "id": "tech_fist_01",
+        "name": "凡人三式",
+        "type": "combat",
+        "mastery": 1,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 28,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物。"
+    },
+    {
+      "id": "item_healing_herb",
+      "name": "凡级草药",
+      "category": "消耗品",
+      "quantity": 2,
+      "description": "用于轻微跌打损伤的草药。"
+    },
+    {
+      "id": "item_map_scrap",
+      "name": "残破地图",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "描绘了附近山脉的一角。"
+    }
+  ],
+  "blood_percent": 100
+}

@@ -1,0 +1,66 @@
+{
+  "profile": {
+    "id": "p_f44ae6dafa74",
+    "name": "林昭",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "聚气坊": 10,
+      "凡人居": 5,
+      "城卫队": 0
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 6,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_strike_fist",
+        "name": "凡俗拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 15,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，较为耐磨。"
+    },
+    {
+      "id": "item_basic_knife",
+      "name": "凡品短刀",
+      "category": "武器",
+      "quantity": 1,
+      "description": "铁匠铺打制的普通短刀，勉强可用于防身。"
+    },
+    {
+      "id": "item_dried_ration",
+      "name": "干粮",
+      "category": "消耗品",
+      "quantity": 5,
+      "description": "压缩的肉干和杂粮，可充饥。"
+    }
+  ],
+  "blood_percent": 100
+}

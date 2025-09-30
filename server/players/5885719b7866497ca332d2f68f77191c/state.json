@@ -1,0 +1,66 @@
+{
+  "profile": {
+    "id": "p_5885719b_start",
+    "name": "李凡",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "凡人聚居地": 10,
+      "清风谷": 0
+    },
+    "attributes": {
+      "体魄": 8,
+      "心性": 7,
+      "悟性": 6,
+      "机缘": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_fist_mortal",
+        "name": "凡人拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "衣物",
+      "quantity": 1,
+      "description": "凡人最常见的衣物，耐磨但不防寒。"
+    },
+    {
+      "id": "item_water_flask",
+      "name": "水囊",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "装有饮用水的皮囊。"
+    },
+    {
+      "id": "item_healing_herb",
+      "name": "基础回春草",
+      "category": "药材",
+      "quantity": 3,
+      "description": "用于简单止血和恢复体力的草药，效果微弱。"
+    }
+  ],
+  "blood_percent": 100
+}

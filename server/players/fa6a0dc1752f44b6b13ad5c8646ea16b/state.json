@@ -1,0 +1,66 @@
+{
+  "profile": {
+    "id": "p_001_liqing",
+    "name": "李青",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "凡尘集市": 10,
+      "清风武馆": 5
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_punch_basic",
+        "name": "凡俗拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [
+      "初入江湖"
+    ],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 12,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 55,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布衣衫",
+      "category": "防具",
+      "quantity": 1,
+      "description": "凡人所穿的简陋衣物，聊胜于无。"
+    },
+    {
+      "id": "item_dry_ration",
+      "name": "干粮",
+      "category": "消耗品",
+      "quantity": 3,
+      "description": "能够充饥的硬面饼。"
+    },
+    {
+      "id": "item_wooden_staff",
+      "name": "木棍",
+      "category": "武器",
+      "quantity": 1,
+      "description": "一根结实的木棍，可用于自卫。"
+    }
+  ],
+  "blood_percent": 100
+}

@@ -1,0 +1,64 @@
+{
+  "profile": {
+    "id": "p_4dafdfc4d85c",
+    "name": "柳逸风",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 5,
+      "山野": 0
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 8
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 3,
+        "synergies": []
+      },
+      {
+        "id": "tech_quan",
+        "name": "基础拳法",
+        "type": "combat",
+        "mastery": 2,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_robe",
+      "name": "粗布衣衫",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的粗布衣衫。"
+    },
+    {
+      "id": "item_rations",
+      "name": "干粮",
+      "category": "食物",
+      "quantity": 5,
+      "description": "干燥的杂粮饼，便于携带。"
+    },
+    {
+      "id": "item_medicine_basic",
+      "name": "止血散",
+      "category": "药品",
+      "quantity": 2,
+      "description": "用于处理轻微外伤的药粉。"
+    }
+  ],
+  "blood_percent": 100
+}

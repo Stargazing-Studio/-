@@ -1,0 +1,66 @@
+{
+  "profile": {
+    "id": "p_tianji_001",
+    "name": "李青云",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "散修联盟": 10,
+      "凡人坊市": 5
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "悟性": 5,
+      "气运": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_mortal_fist",
+        "name": "凡尘拳",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 20,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 15,
+  "inventory": [
+    {
+      "id": "item_linen_robe",
+      "name": "粗麻布衣",
+      "category": "衣物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，不耐磨损。"
+    },
+    {
+      "id": "item_healing_herb",
+      "name": "清心草",
+      "category": "药材",
+      "quantity": 3,
+      "description": "凡间常见的药草，有轻微的安神作用。"
+    },
+    {
+      "id": "item_dry_ration",
+      "name": "普通干粮",
+      "category": "食物",
+      "quantity": 5,
+      "description": "可以在野外充饥的硬饼。"
+    }
+  ],
+  "blood_percent": 100
+}

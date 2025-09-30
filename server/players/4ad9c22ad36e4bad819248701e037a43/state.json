@@ -1,0 +1,65 @@
+{
+  "profile": {
+    "id": "p_chenpingan_001",
+    "name": "陈平安",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 10,
+      "村落": 5
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_jichutuna",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 15,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，略显陈旧。"
+    },
+    {
+      "id": "item_minor_heal_pill",
+      "name": "小还丹",
+      "category": "药材",
+      "quantity": 2,
+      "description": "可以缓慢恢复气血的小药丸，凡人常用。"
+    },
+    {
+      "id": "item_dried_ration",
+      "name": "干粮",
+      "category": "食物",
+      "quantity": 5,
+      "description": "方便携带的压缩食物，解决旅途饥饿。"
+    },
+    {
+      "id": "item_small_dagger",
+      "name": "木柄匕首",
+      "category": "武器",
+      "quantity": 1,
+      "description": "用于防身的简易短匕。"
+    }
+  ],
+  "blood_percent": 100
+}

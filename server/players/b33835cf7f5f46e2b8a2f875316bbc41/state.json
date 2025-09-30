@@ -1,0 +1,71 @@
+{
+  "profile": {
+    "id": "p_lixia001",
+    "name": "李凡",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 0,
+      "凡人村落": 5
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_combat_fist",
+        "name": "凡人拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      },
+      {
+        "id": "tech_movement_stride",
+        "name": "凡人健步",
+        "type": "movement",
+        "mastery": 2,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_ymm",
+  "spirit_stones": 25,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，保暖性能一般。"
+    },
+    {
+      "id": "item_water_pouch",
+      "name": "清水袋",
+      "category": "消耗品",
+      "quantity": 1,
+      "description": "装有清水的皮袋，聊胜于无。"
+    },
+    {
+      "id": "item_wooden_sword",
+      "name": "木剑",
+      "category": "武器",
+      "quantity": 1,
+      "description": "练习基础拳脚功夫所用的木制兵器。"
+    }
+  ],
+  "blood_percent": 100
+}

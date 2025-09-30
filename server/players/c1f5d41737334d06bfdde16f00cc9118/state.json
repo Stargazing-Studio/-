@@ -1,0 +1,59 @@
+{
+  "profile": {
+    "id": "p_c1f5d4173733",
+    "name": "魏长风",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "青竹门": 0,
+      "坊市": 15
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 8,
+      "悟性": 7,
+      "灵根": 4
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_strike_basic",
+        "name": "粗浅拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人",
+      "score": 20,
+      "next_milestone": "炼气期"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布长袍",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，有些磨损。"
+    },
+    {
+      "id": "item_bigu_dan",
+      "name": "辟谷丹（下品）",
+      "category": "消耗品",
+      "quantity": 5,
+      "description": "凡人使用的基础丹药，可数日不食五谷。"
+    }
+  ],
+  "blood_percent": 100
+}

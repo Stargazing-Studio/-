@@ -1,0 +1,64 @@
+{
+  "profile": {
+    "id": "p_65b17cb0811c",
+    "name": "顾清源",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "村落联盟": 10,
+      "山野散修": 0
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 8
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 12,
+        "synergies": []
+      },
+      {
+        "id": "tech_fist_mortal",
+        "name": "凡人拳法",
+        "type": "combat",
+        "mastery": 8,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 5,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 48,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布衣衫",
+      "category": "防具",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，聊胜于无。"
+    },
+    {
+      "id": "item_rations",
+      "name": "干粮",
+      "category": "消耗品",
+      "quantity": 5,
+      "description": "压缩的谷物和肉干，能维持数日体力。"
+    },
+    {
+      "id": "item_hoe_simple",
+      "name": "简易锄头",
+      "category": "工具",
+      "quantity": 1,
+      "description": "务农所用的基础工具。"
+    }
+  ],
+  "blood_percent": 100
+}

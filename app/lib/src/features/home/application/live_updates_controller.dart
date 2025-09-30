@@ -40,7 +40,18 @@ class HomeLiveUpdatesController
     final config = _ref.read(appConfigProvider);
     state = const AsyncValue<HomeLiveUpdatesState>.loading();
     try {
-      final uri = Uri.parse(config.wsChroniclesUrl);
+      // 绑定 pid 到 WS 查询参数，确保跨浏览器隔离
+      final base = Uri.parse(config.wsChroniclesUrl);
+      String? pid = await LocalCache.loadPlayerId();
+      pid ??= await _ref.read(apiClientProvider).whoAmI();
+      final uri = pid == null
+          ? base
+          : base.replace(
+              queryParameters: {
+                ...base.queryParameters,
+                'pid': pid,
+              },
+            );
       _channel = WebSocketChannel.connect(uri);
       _subscription = _channel!.stream.listen(
         _handleMessage,

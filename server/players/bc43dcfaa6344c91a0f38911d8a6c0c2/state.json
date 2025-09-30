@@ -1,0 +1,73 @@
+{
+  "profile": {
+    "id": "p_bc43dcfaa634",
+    "name": "李青",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "栖霞镇": 10,
+      "云梦山坊市": 0
+    },
+    "attributes": {
+      "体魄": 8,
+      "心性": 7
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_quanjiao_crude",
+        "name": "粗浅拳脚",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      },
+      {
+        "id": "tech_buxing",
+        "name": "凡人步行",
+        "type": "movement",
+        "mastery": 10,
+        "synergies": []
+      }
+    ],
+    "achievements": [
+      "初入江湖"
+    ],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 5,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 18,
+  "inventory": [
+    {
+      "id": "item_robe_coarse",
+      "name": "粗布衣衫",
+      "category": "防具",
+      "quantity": 1,
+      "description": "凡人常用的衣物，基本无法提供防御。"
+    },
+    {
+      "id": "item_dry_rations",
+      "name": "干粮",
+      "category": "消耗品",
+      "quantity": 3,
+      "description": "普通且易于携带的食物，补充体力。"
+    },
+    {
+      "id": "item_iron_sword_crude",
+      "name": "简陋铁剑",
+      "category": "武器",
+      "quantity": 1,
+      "description": "未经炼制的凡铁打造的剑，聊胜于无。"
+    }
+  ],
+  "blood_percent": 100
+}

@@ -108,7 +108,7 @@ def create_app() -> FastAPI:
     # 这里改为基于正则放行本地开发来源（localhost/127.0.0.1 任意端口）。
     origin_regex = os.environ.get(
         "ALLOWED_ORIGIN_REGEX",
-        r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+        r"^https?://(localhost|127\.0\.0\.1|game.xingling.tech)(:\d+)?$",
     )
     app.add_middleware(
         CORSMiddleware,
@@ -550,22 +550,102 @@ def create_app() -> FastAPI:
                 pid = uuid.uuid4().hex
                 response.set_cookie("player_id", pid, httponly=True, samesite="lax")
             if not players.exists(pid):
-                # 未初始化时不再返回 400，直接给出友好占位反馈，避免前端提示“未就绪”阻断流程
-                now = datetime.now(UTC)
-                command = CommandResult(
-                    id=f"cmd-{now.strftime('%Y%m%d%H%M%S')}-{pid[:6]}",
-                    content=payload.content,
-                    feedback="指令通道未就绪：请先点击“开始修行”完成初始化。",
-                    created_at=now,
-                )
-                chronicle = ChronicleLog(
-                    id=f"log-{now.strftime('%Y%m%d%H%M%S')}-{pid[:6]}",
-                    title="指令通道未就绪",
-                    timestamp=now,
-                    summary="请先完成初始化（开始修行），以接通天机。",
-                    tags=["指令", "未就绪"],
-                )
-                return CommandResponse(result=command, emitted_log=chronicle)
+                # 若玩家尚未初始化，这里自动初始化一次，避免首次发送指令仍提示未就绪
+                world = repository.get_state()
+                node_ids = [n.id for n in world.map_state.nodes]
+                nodes_brief = "\n".join([f"- {n.id}" for n in world.map_state.nodes])
+                prompt = (INIT_PLAYER_PROMPT
+                          .replace("{nodes_brief}", nodes_brief)
+                          .replace("{seed_hint}", pid[:12]))
+                text = await gemini_client.generate_player_state_text(prompt)
+                if not text:
+                    raise HTTPException(status_code=503, detail="AI 未返回玩家数据，无法初始化玩家")
+                def _extract_json(s: str) -> str:
+                    s = s.strip()
+                    if s.startswith("{") and s.endswith("}"):
+                        return s
+                    a, b = s.find("{"), s.rfind("}")
+                    if a == -1 or b == -1:
+                        raise ValueError("AI 返回不含 JSON")
+                    return s[a : b + 1]
+                import json as _json
+                try:
+                    parsed = _json.loads(_extract_json(text))
+                except Exception as e:
+                    raise HTTPException(status_code=503, detail=f"玩家数据解析失败：{e}")
+                # 复用 /profile 的归一化逻辑（内联最关键部分）
+                def _slug(s: str, prefix: str) -> str:
+                    base = re.sub(r"[^a-zA-Z0-9]+", "_", (s or "").strip()).strip("_").lower() or prefix
+                    return f"{prefix}_{base}"[:48]
+                def _ensure_int(x, default: int = 0) -> int:
+                    try:
+                        if isinstance(x, bool):
+                            return default
+                        return int(x)
+                    except Exception:
+                        return default
+                realm_raw = str((parsed.get("profile") or {}).get("realm") or "凡人")
+                realm = "凡人" if "凡人" in realm_raw else realm_raw
+                prof = parsed.get("profile") or {}
+                norm = {
+                    "profile": {
+                        "id": prof.get("id") or f"p_{pid[:8]}",
+                        "name": prof.get("name") or "无名",
+                        "realm": realm,
+                        "guild": prof.get("guild") or "",
+                        "faction_reputation": prof.get("faction_reputation") or {},
+                        "attributes": prof.get("attributes") or {},
+                        "techniques": [],
+                        "achievements": prof.get("achievements") or [],
+                        "ascension_progress": {
+                            "stage": (prof.get("ascension_progress") or {}).get("stage") or realm,
+                            "score": _ensure_int((prof.get("ascension_progress") or {}).get("score"), 0),
+                            "next_milestone": (prof.get("ascension_progress") or {}).get("next_milestone") or "炼气一阶",
+                        },
+                    },
+                    "current_location": parsed.get("current_location") if isinstance(parsed.get("current_location"), str) else (parsed.get("current_location") or {}).get("id") or (node_ids[0] if node_ids else ""),
+                    "spirit_stones": _ensure_int(parsed.get("spirit_stones"), 20),
+                    "inventory": [],
+                    "blood_percent": _ensure_int(parsed.get("blood_percent"), 100),
+                }
+                # techniques 兼容
+                tech = prof.get("techniques")
+                if isinstance(tech, list):
+                    for t in tech:
+                        if isinstance(t, dict):
+                            tname = t.get("name") or t.get("id") or "无名术"
+                            norm["profile"]["techniques"].append({
+                                "id": t.get("id") or _slug(tname, "tech"),
+                                "name": tname,
+                                "type": t.get("type") or "support",
+                                "mastery": _ensure_int(t.get("mastery"), 1),
+                                "synergies": t.get("synergies") or [],
+                            })
+                elif isinstance(tech, dict):
+                    for tname, lvl in tech.items():
+                        norm["profile"]["techniques"].append({
+                            "id": _slug(str(tname), "tech"),
+                            "name": str(tname),
+                            "type": "support",
+                            "mastery": _ensure_int(lvl, 1),
+                            "synergies": [],
+                        })
+                # inventory 兼容
+                inv = parsed.get("inventory") or []
+                for it in inv if isinstance(inv, list) else []:
+                    if not isinstance(it, dict):
+                        continue
+                    iname = it.get("name") or "无名物"
+                    cat = it.get("category") or it.get("type") or "杂物"
+                    norm["inventory"].append({
+                        "id": it.get("id") or _slug(iname, "item"),
+                        "name": iname,
+                        "category": str(cat),
+                        "quantity": _ensure_int(it.get("quantity"), 1),
+                        "description": str(it.get("description") or ""),
+                    })
+                pstate = PlayerState.model_validate(norm)
+                players.save(pid, pstate)
             # 使用玩家个人指令历史
             history = players.list_commands(pid)
             recent = history[:3]
@@ -844,8 +924,17 @@ def create_app() -> FastAPI:
 
     @app.websocket("/ws/chronicles")
     async def chronicle_stream(websocket: WebSocket) -> None:
-        # 根据 cookie 选择玩家私有频道；若无 cookie 则退化为全局空快照
+        # 根据 cookie 或查询参数选择玩家私有频道；若均无则退化为全局空快照
         pid = websocket.cookies.get("player_id") if hasattr(websocket, "cookies") else None
+        try:
+            # 允许 ws://.../ws/chronicles?pid=<id>
+            qp = websocket.scope.get("query_string", b"").decode() if hasattr(websocket, "scope") else ""
+            from urllib.parse import parse_qs
+            params = parse_qs(qp)
+            if not pid and params.get("pid"):
+                pid = params.get("pid")[0]
+        except Exception:
+            pass
         channel = f"chronicles:{pid}" if pid else "chronicles"
         # 构造该玩家的时间线快照
         try:

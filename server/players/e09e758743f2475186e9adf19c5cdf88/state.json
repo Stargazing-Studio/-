@@ -1,0 +1,64 @@
+{
+  "profile": {
+    "id": "p_e09e758743f2",
+    "name": "柳逸",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 0,
+      "清风门": 5
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 8
+    },
+    "techniques": [
+      {
+        "id": "tech_h_tuna",
+        "name": "混元吐纳术",
+        "type": "support",
+        "mastery": 10,
+        "synergies": []
+      },
+      {
+        "id": "tech_j_quan",
+        "name": "基础拳法",
+        "type": "combat",
+        "mastery": 5,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 45,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布道袍",
+      "category": "装备",
+      "quantity": 1,
+      "description": "凡人日常穿着的服饰，略有保暖作用。"
+    },
+    {
+      "id": "item_q_fu",
+      "name": "清心符",
+      "category": "消耗品",
+      "quantity": 2,
+      "description": "一次性符箓，用于稳定心神，避免走火入魔。"
+    },
+    {
+      "id": "item_m_pill",
+      "name": "凡人丹药",
+      "category": "消耗品",
+      "quantity": 5,
+      "description": "用于治疗凡人创伤或补充体力的小药丸。"
+    }
+  ],
+  "blood_percent": 100
+}

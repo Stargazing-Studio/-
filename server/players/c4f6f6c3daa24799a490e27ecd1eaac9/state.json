@@ -1,0 +1,64 @@
+{
+  "profile": {
+    "id": "p_linxuan_001",
+    "name": "林玄",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "村落": 15,
+      "坊市": 0
+    },
+    "attributes": {
+      "体魄": 7,
+      "心性": 6
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 8,
+        "synergies": []
+      },
+      {
+        "id": "tech_quanfa_basic",
+        "name": "凡人长拳",
+        "type": "combat",
+        "mastery": 4,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 15,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 28,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布短衫",
+      "category": "衣物",
+      "quantity": 1,
+      "description": "凡人常用的粗布衣物，略有磨损。"
+    },
+    {
+      "id": "item_wood_knife",
+      "name": "普通柴刀",
+      "category": "工具",
+      "quantity": 1,
+      "description": "用于砍柴的铁制刀具，勉强可以防身。"
+    },
+    {
+      "id": "item_dry_ration",
+      "name": "干粮",
+      "category": "食物",
+      "quantity": 5,
+      "description": "硬实的烤饼，能坚持数日。"
+    }
+  ],
+  "blood_percent": 100
+}

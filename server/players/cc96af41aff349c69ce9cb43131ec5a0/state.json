@@ -1,0 +1,65 @@
+{
+  "profile": {
+    "id": "p_liyunxiao_01",
+    "name": "李云霄",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "新手村": 10,
+      "坊市": 0
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna_basic",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_fanren_fist",
+        "name": "凡人拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人",
+      "score": 0,
+      "next_milestone": "炼气期"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布衣衫",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，聊胜于无。"
+    },
+    {
+      "id": "item_rusty_sword",
+      "name": "生锈铁剑",
+      "category": "武器",
+      "quantity": 1,
+      "description": "一把锈迹斑斑的铁剑，勉强能用作防身。"
+    },
+    {
+      "id": "item_basic_pill",
+      "name": "凡品补气丹",
+      "category": "丹药",
+      "quantity": 3,
+      "description": "补充少许气力的基础丹药，凡人可用。"
+    }
+  ],
+  "blood_percent": 100
+}

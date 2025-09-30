@@ -1,0 +1,65 @@
+{
+  "profile": {
+    "id": "p_starter_lqf_01",
+    "name": "柳清风",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "坊市": 0,
+      "山野村落": 5
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7,
+      "悟性": 5
+    },
+    "techniques": [
+      {
+        "id": "tech_yq_basic",
+        "name": "基础引气术",
+        "type": "core",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_fk_basic",
+        "name": "凡人快跑",
+        "type": "movement",
+        "mastery": 2,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_st",
+  "spirit_stones": 25,
+  "inventory": [
+    {
+      "id": "item_coarse_robe",
+      "name": "粗布麻衣",
+      "category": "服饰",
+      "quantity": 1,
+      "description": "凡人日常穿着的粗糙衣物，聊胜于无。"
+    },
+    {
+      "id": "item_dry_ration",
+      "name": "干粮",
+      "category": "消耗品",
+      "quantity": 3,
+      "description": "应急用的简单食物，味道很差。"
+    },
+    {
+      "id": "item_old_dagger",
+      "name": "生锈的匕首",
+      "category": "武器",
+      "quantity": 1,
+      "description": "一把老旧的匕首，勉强可以用来防身或切割。"
+    }
+  ],
+  "blood_percent": 100
+}

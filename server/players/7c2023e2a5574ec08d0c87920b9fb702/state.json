@@ -1,0 +1,70 @@
+{
+  "profile": {
+    "id": "p_lqy_001",
+    "name": "李青云",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "凡人居所": 10
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7
+    },
+    "techniques": [
+      {
+        "id": "tech_jichu_tuna",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 3,
+        "synergies": []
+      },
+      {
+        "id": "tech_putong_quan",
+        "name": "普通拳脚",
+        "type": "combat",
+        "mastery": 2,
+        "synergies": []
+      },
+      {
+        "id": "tech_jiben_bushu",
+        "name": "基本步法",
+        "type": "movement",
+        "mastery": 1,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 0,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_shifu_yishang",
+      "name": "粗麻布衣",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，聊胜于无。"
+    },
+    {
+      "id": "item_jiedu_cao",
+      "name": "解毒草",
+      "category": "药材",
+      "quantity": 3,
+      "description": "凡间常见的草药，可解轻微毒素。"
+    },
+    {
+      "id": "item_ganliang",
+      "name": "凡人干粮",
+      "category": "食物",
+      "quantity": 5,
+      "description": "易于携带的粗糙食物，能填饱肚子。"
+    }
+  ],
+  "blood_percent": 100
+}

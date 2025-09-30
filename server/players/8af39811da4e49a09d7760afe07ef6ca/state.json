@@ -1,0 +1,64 @@
+{
+  "profile": {
+    "id": "player_001",
+    "name": "凌霄",
+    "realm": "凡人九品",
+    "guild": "无",
+    "faction_reputation": {
+      "赤羽监": 10,
+      "暮山书院": 5
+    },
+    "attributes": {
+      "Strength": 10,
+      "Dexterity": 12,
+      "Spirit": 15,
+      "Constitution": 11,
+      "Luck": 18
+    },
+    "techniques": [
+      {
+        "id": "t_001",
+        "name": "凡尘基础呼吸法",
+        "type": "core",
+        "mastery": 20,
+        "synergies": [
+          "凡人斗技"
+        ]
+      },
+      {
+        "id": "t_002",
+        "name": "凌云基础身法",
+        "type": "movement",
+        "mastery": 5,
+        "synergies": []
+      }
+    ],
+    "achievements": [
+      "命轮初启"
+    ],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 50,
+      "next_milestone": "凡人八品"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 50,
+  "inventory": [
+    {
+      "id": "item_001",
+      "name": "粗布衣衫",
+      "category": "防具",
+      "quantity": 1,
+      "description": "凡俗之物，聊胜于无的防护。"
+    },
+    {
+      "id": "item_002",
+      "name": "凝气草",
+      "category": "灵材",
+      "quantity": 3,
+      "description": "低阶灵材，可用于基础丹药炼制，凡人服用略有裨益。"
+    }
+  ],
+  "blood_percent": 100
+}

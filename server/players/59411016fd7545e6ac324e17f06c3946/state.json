@@ -1,0 +1,64 @@
+{
+  "profile": {
+    "id": "p_liuyi_001",
+    "name": "柳逸",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "清风门": 50,
+      "坊市": 0
+    },
+    "attributes": {
+      "体魄": 6,
+      "心性": 7
+    },
+    "techniques": [
+      {
+        "id": "tech_tuna",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_quanjin",
+        "name": "凡人拳劲",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 10,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_ymm",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_robe_coarse",
+      "name": "粗布衣衫",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "凡人常穿的衣物，聊胜于无。"
+    },
+    {
+      "id": "item_ration_dried",
+      "name": "干粮",
+      "category": "消耗品",
+      "quantity": 3,
+      "description": "用于充饥的简单食物。"
+    },
+    {
+      "id": "item_minor_talismans",
+      "name": "入门符箓",
+      "category": "消耗品",
+      "quantity": 2,
+      "description": "描绘了微弱防御阵法的符箓，聊作防身。"
+    }
+  ],
+  "blood_percent": 100
+}

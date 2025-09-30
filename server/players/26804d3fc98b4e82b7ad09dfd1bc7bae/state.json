@@ -1,0 +1,75 @@
+{
+  "profile": {
+    "id": "p_zhaoda",
+    "name": "赵大牛",
+    "realm": "凡人",
+    "guild": "",
+    "faction_reputation": {
+      "凡人集市": 5,
+      "青山村": 10
+    },
+    "attributes": {
+      "体魄": 8,
+      "心性": 6,
+      "悟性": 5,
+      "根骨": 7
+    },
+    "techniques": [
+      {
+        "id": "tech_jichutuna",
+        "name": "基础吐纳术",
+        "type": "support",
+        "mastery": 5,
+        "synergies": []
+      },
+      {
+        "id": "tech_pujiquan",
+        "name": "普及拳法",
+        "type": "combat",
+        "mastery": 3,
+        "synergies": []
+      }
+    ],
+    "achievements": [
+      "初入尘世"
+    ],
+    "ascension_progress": {
+      "stage": "凡人九品",
+      "score": 15,
+      "next_milestone": "炼气一阶"
+    }
+  },
+  "current_location": "node_qfv",
+  "spirit_stones": 35,
+  "inventory": [
+    {
+      "id": "item_linen_robe",
+      "name": "麻布长袍",
+      "category": "衣物",
+      "quantity": 1,
+      "description": "凡人常穿的朴素长袍。"
+    },
+    {
+      "id": "item_crude_sword",
+      "name": "凡铁短剑",
+      "category": "武器",
+      "quantity": 1,
+      "description": "农家打制的防身短剑，刃口不齐。"
+    },
+    {
+      "id": "item_lingzhi_herb",
+      "name": "普通灵芝",
+      "category": "药材",
+      "quantity": 2,
+      "description": "凡人用来强身的常见药材。"
+    },
+    {
+      "id": "item_water_pouch",
+      "name": "牛皮水袋",
+      "category": "杂物",
+      "quantity": 1,
+      "description": "一个结实的牛皮水袋，装满了清水。"
+    }
+  ],
+  "blood_percent": 100
+}

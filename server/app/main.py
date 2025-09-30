@@ -108,7 +108,7 @@ def create_app() -> FastAPI:
     # 这里改为基于正则放行本地开发来源（localhost/127.0.0.1 任意端口）。
     origin_regex = os.environ.get(
         "ALLOWED_ORIGIN_REGEX",
-        r"^https?://(localhost|127\.0\.0\.1|game.xingling.tech)(:\d+)?$",
+        r"^https?://((localhost|127\.0\.0\.1|10\.0\.2\.2)|([0-9]{1,3}\.){3}[0-9]{1,3})(:\d+)?$",
     )
     app.add_middleware(
         CORSMiddleware,

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 仅在开发环境放开 http 明文访问，按需添加你的主机/IP -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">101.237.129.72</domain>
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+    </domain-config>
+</network-security-config>
+

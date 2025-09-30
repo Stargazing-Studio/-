@@ -35,3 +35,52 @@ services:
 
 volumes:
   pgdata:
+version: "3.9"
+
+# 运行说明（本地开发/内网调试）：
+# 1) 将 GEMINI_API_KEY 写在 server/.env 或环境变量中
+# 2) 执行：docker compose up -d api
+# 3) 浏览器访问：http://localhost:8000/health
+# 4) 前端（Web）使用 dart-define 指向 http://localhost:8000；Android 模拟器使用 http://10.0.2.2:8000
+
+services:
+  api:
+    image: python:3.11-slim
+    container_name: lingyan_api
+    working_dir: /app
+    restart: unless-stopped
+    environment:
+      # 可从宿主环境注入，也可通过 server/.env 提供
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # 允许携带 Cookie 的 CORS 来源（正则）。可按需覆盖：ALLOWED_ORIGIN_REGEX="^https?://(localhost|127\.0\.0\.1|10\.0\.2\.2|192\.168\.\d+\.\d+)(:\\d+)?$"
+      ALLOWED_ORIGIN_REGEX: ${ALLOWED_ORIGIN_REGEX:-^https?://(localhost|127\.0\.0\.1|10\.0\.2\.2)(:\\d+)?$}
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "8000:8000"
+    volumes:
+      # 挂载代码与数据，便于热更新与持久化
+      - ./server:/app/server:ro
+      - ./server/.env:/app/.env:ro
+      - ./server/players:/app/players
+      - ./server/world_state.json:/app/world_state.json
+    command: >
+      sh -c "pip install --no-cache-dir -r server/requirements.txt &&
+             uvicorn server.app.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python - <<'PY'\nimport sys,requests;\nimport os;\nurl='http://127.0.0.1:8000/health';\n\ntry:\n    r=requests.get(url,timeout=2)\n    sys.exit(0 if r.ok else 1)\nexcept Exception:\n    sys.exit(1)\nPY"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 可选：静态站点（用于托管 Flutter Web 构建产物）
+  # 先在宿主机执行：flutter build web（产物在 app/build/web）
+  # web:
+  #   image: nginx:alpine
+  #   container_name: lingyan_web
+  #   restart: unless-stopped
+  #   ports:
+  #     - "5173:80"
+  #   volumes:
+  #     - ./app/build/web:/usr/share/nginx/html:ro
+  #   depends_on:
+  #     - api
